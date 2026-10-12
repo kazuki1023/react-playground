@@ -1,0 +1,550 @@
+/* ---- レイアウト ---- */
+/* Why not position: fixed: fixed にするとヘッダーが文書フローから外れ、残りの高さを
+   自分で calc し続けることになる。grid の行で高さを宣言すれば、スクロールしない領域と
+   スクロールする領域が CSS 側で決まる。 */
+.layout {
+  height: 100svh;
+  display: grid;
+  grid-template-rows: var(--header-h) minmax(0, 1fr);
+}
+
+.layout__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-h);
+  text-decoration: none;
+}
+
+.brand:hover {
+  text-decoration: underline;
+}
+
+.layout__version {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.layout__body {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  min-height: 0;
+}
+
+.layout__main {
+  padding: 28px 24px 64px;
+  min-width: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* 画面が狭いときは領域ごとのスクロールをやめ、素の文書スクロールに戻す。
+   狭い画面で縦を 3 つに割ると、どの領域も読めなくなる。 */
+@media (max-width: 760px) {
+  .layout {
+    height: auto;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .layout__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .layout__main {
+    overflow-y: visible;
+  }
+
+  .layout__header {
+    padding: 12px 24px;
+    height: auto;
+  }
+}
+
+/* ---- ナビゲーション ---- */
+.nav {
+  border-right: 1px solid var(--border);
+  padding: 24px 12px;
+  background: var(--surface);
+  overflow-y: auto;
+}
+
+@media (max-width: 760px) {
+  .nav {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow-y: visible;
+  }
+}
+
+.nav__heading {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 12px 8px;
+}
+
+.nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav__link {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav__link:hover {
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.nav__link--active {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+/* ---- ホーム ---- */
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home__title {
+  font-size: 32px;
+}
+
+.home__lead {
+  max-width: 60ch;
+}
+
+.card-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+}
+
+.card {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.card__summary {
+  font-size: 14px;
+}
+
+.card__cta {
+  font-size: 14px;
+  color: var(--accent);
+}
+
+/* ---- デモページ ---- */
+.demo-page__head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.demo-page__title {
+  font-size: 28px;
+}
+
+.demo-page__summary {
+  max-width: 60ch;
+}
+
+.text-link {
+  color: var(--accent);
+  font-size: 14px;
+}
+
+/* ---- ハーネス（左=対象 / 右=計測パネル） ---- */
+.harness {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+  padding-top: 24px;
+}
+
+@media (max-width: 1080px) {
+  .harness {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.harness__main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+/* Why not fixed: sticky なら、デモ列が短いページでは普通に流れ、長いページでだけ
+   貼り付く。計測パネルの高さをヘッダーの高さから引き算するのも 1 箇所で済む。 */
+.harness__rail {
+  position: sticky;
+  top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: calc(100svh - var(--header-h) - 48px);
+}
+
+@media (max-width: 1080px) {
+  .harness__rail {
+    position: static;
+    max-height: none;
+  }
+}
+
+.harness__main {
+  padding-bottom: 8px;
+}
+
+.harness__stage {
+  display: contents;
+}
+
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---- 計測パネルの条件 ---- */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.controls__title {
+  font-size: 14px;
+}
+
+.controls__hint {
+  font-size: 12px;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.switch input {
+  margin: 3px 0 0;
+}
+
+.switch__label {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.switch__hint {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* ---- 導入 ---- */
+.lede {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--accent-border);
+  border-radius: 10px;
+  background: var(--accent-bg);
+}
+
+.lede__title {
+  font-size: 16px;
+}
+
+.lede p {
+  font-size: 14px;
+  max-width: 62ch;
+}
+
+/* ---- パネル ---- */
+.panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.panel__head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.panel__title {
+  font-size: 17px;
+}
+
+.panel__intent {
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.panel__body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.readout dt {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.readout dd {
+  margin: 2px 0 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+.readout__strong {
+  font-size: 24px !important;
+  font-weight: 600;
+  line-height: 120%;
+}
+
+.note {
+  font-size: 13px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--border);
+  background: var(--surface);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---- 確かめ方 / 見えるはずのこと ---- */
+.howto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.howto__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.howto__steps {
+  margin: 8px 0 0;
+  padding-left: 1.4em;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.howto__expected {
+  margin-top: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.howto__expected strong {
+  color: var(--text-h);
+}
+
+/* ---- 選択肢 ---- */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.choice__legend {
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.choice__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ---- 実行ログ ---- */
+.log-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 140px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.log-panel__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.log-panel__title {
+  font-size: 14px;
+}
+
+.log-panel__count {
+  font-size: 12px;
+  margin-right: auto;
+}
+
+.log-panel__empty {
+  padding: 14px;
+  font-size: 13px;
+}
+
+.log-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.log-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-entry__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.log-entry__time,
+.log-entry__source {
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.log-entry__source {
+  margin-left: auto;
+}
+
+.log-entry__kind {
+  font-family: var(--mono);
+  font-size: 10px;
+  border-radius: 4px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+}
+
+.log-entry__kind--setup {
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.log-entry__kind--cleanup {
+  color: var(--warn);
+}
+
+.log-entry__kind--event {
+  color: var(--ok);
+}
+
+.log-entry__message {
+  font-size: 13px;
+  line-height: 145%;
+  color: var(--text-h);
+}
